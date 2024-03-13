@@ -1,5 +1,6 @@
 package com.gdu.prj01.anno01;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -8,7 +9,7 @@ public class MainClass {
   public static void method1() {
     
     // appCtx.xml 읽기
-    AbstractApplicationContext ctx = new GenericXmlApplicationContext("com/gdu/prj01/xml01/appCtx.xml");
+    AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
     
     // appCtx.xml 에 등록한 빈(bean) 가져오기
     Calculator calculator = ctx.getBean("calculator", Calculator.class);
@@ -26,7 +27,7 @@ public class MainClass {
 
   public static void method2() {
     
-    AbstractApplicationContext ctx = new GenericXmlApplicationContext("com/gdu/prj01/xml01/appCtx.xml");
+    AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
     
     Computer computer1 = ctx.getBean("computer1", Computer.class);
     
@@ -42,7 +43,7 @@ public class MainClass {
   
   public static void method3() {
     
-    AbstractApplicationContext ctx = new GenericXmlApplicationContext("com/gdu/prj01/xml01/appCtx.xml");
+    AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
     
     Computer computer2 = ctx.getBean("computer2", Computer.class);
     System.out.println(computer2.getModel());
@@ -57,7 +58,7 @@ public class MainClass {
   }
   
   public static void main(String[] args) {
-    method3();
+    method1();
 
   }
 
