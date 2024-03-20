@@ -1,4 +1,4 @@
-package com.gdu.prj05.service;
+package com.gdu.prj06.service;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -8,13 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
-import com.gdu.prj05.dao.ContactDao;
-import com.gdu.prj05.dto.ContactDto;
+import com.gdu.prj06.dao.ContactDao;
+import com.gdu.prj06.dto.ContactDto;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Service
 public class ContactServiceImpl implements ContactService {
 
   private final ContactDao contactDao;
@@ -136,5 +135,40 @@ public class ContactServiceImpl implements ContactService {
   public ContactDto getContactByNo(int contactNo) {
     return contactDao.getContactByNo(contactNo);
   }
+  
+  @Override
+  public void txTest() {
+    
+    /*
+     * 트랜잭션 처리가 필요한 서비스란?
+     * 
+     * INSERT 또는 UPDATE 또는 DELETE 처리가 2개 이상 이루어지는 서비스이다.
+     * 모두 성공시키거나, 모두 실패시킨다.
+     */
+    
+    // NAME 칼럼은 NOT NULL 처리가 되어 있다.
+    
+    // 성공하는 INSERT
+    ContactDto contact1 = ContactDto.builder()
+                              .name("이름")
+                              .mobile("모바일")
+                              .email("이메일")
+                              .address("주소")
+                            .build();
+    contactDao.registerContact(contact1);
+    
+    // 실패하는 INSERT
+    ContactDto contact2 = new ContactDto();
+    contactDao.registerContact(contact2);
+    
+    // 최종 확인 : 트랜잭션 처리가 되었다면 모든 INSERT 가 실패해야 한다.
+    
+  }
+  
+  
+  
+  
+  
+  
 
 }

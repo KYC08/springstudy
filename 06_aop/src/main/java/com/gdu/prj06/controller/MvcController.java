@@ -1,4 +1,4 @@
-package com.gdu.prj05.controller;
+package com.gdu.prj06.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

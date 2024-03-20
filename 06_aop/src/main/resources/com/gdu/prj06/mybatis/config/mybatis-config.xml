@@ -12,7 +12,7 @@
   
   <!-- typeAliases -->
   <typeAliases>
-    <typeAlias alias="ContactDto" type="com.gdu.prj05.dto.ContactDto"/>
+    <typeAlias alias="ContactDto" type="com.gdu.prj06.dto.ContactDto"/>
   </typeAliases>
   
 </configuration>
