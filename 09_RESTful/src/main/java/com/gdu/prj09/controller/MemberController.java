@@ -1,23 +1,23 @@
 package com.gdu.prj09.controller;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.gdu.prj09.dto.AddressDto;
 import com.gdu.prj09.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
 /*
- * RESTful 
+ * RESTful
  * 1. REpresentation State Transfer
  * 2. 요청 주소를 작성하는 한 방식이다.
  * 3. 요청 파라미터를 ? 뒤에 추가하는 Query String 방식을 사용하지 않는다.
@@ -33,27 +33,39 @@ import lombok.RequiredArgsConstructor;
  *    3) 삽입 | /members                    | POST
  *    4) 수정 | /members                    | PUT
  *    5) 삭제 | /members/1                  | DELETE 
- *            | /members/1,2,3              |     
+ *            | /members/1,2,3              |         
  */
 
 @RequiredArgsConstructor
 @Controller
 public class MemberController {
-  
+
   private final MemberService memberService;
   
   @GetMapping("/admin/member.do")
   public void adminMember() {
     // 반환타입이 void 인 경우 주소를 JSP 경로로 인식한다.
-    // /admin/member.do =====> /WEB-INF/view/admin/member.jsp
+    // /admin/member.do =====> /WEB-INF/views/admin/member.jsp
   }
   
   @PostMapping(value="/members", produces="application/json")
   public ResponseEntity<Map<String, Object>> registerMember(@RequestBody Map<String, Object> map
                                                           , HttpServletResponse response) {
-
     return memberService.registerMember(map, response);
   }
-
+  
+  @GetMapping(value="/members/page/{p}/display/{dp}", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getMembers(@PathVariable(value="p", required=false) Optional<String> optPage
+                                                      , @PathVariable(value="dp", required=false) Optional<String> optDisplay) {
+    int page = Integer.parseInt(optPage.orElse("1"));
+    int display = Integer.parseInt(optDisplay.orElse("20"));
+    return memberService.getMembers(page, display);
+  }
+  
+  @GetMapping(value="/members/{memberNo}", produces="application/json")
+  public ResponseEntity<Map<String, Object>> getMemberByNo(@PathVariable(value="memberNo", required=false) Optional<String> opt) {
+    int memberNo = Integer.parseInt(opt.orElse("0"));
+    return memberService.getMemberByNo(memberNo);
+  }
   
 }
