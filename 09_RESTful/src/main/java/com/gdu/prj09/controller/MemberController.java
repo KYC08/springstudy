@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.gdu.prj09.service.MemberService;
@@ -32,7 +34,7 @@ import lombok.RequiredArgsConstructor;
  *    2) 상세 | /members/1                  | GET
  *    3) 삽입 | /members                    | POST
  *    4) 수정 | /members                    | PUT
- *    5) 삭제 | /members/1                  | DELETE 
+ *    5) 삭제 | /member/1                   | DELETE
  *            | /members/1,2,3              |         
  */
 
@@ -66,6 +68,22 @@ public class MemberController {
   public ResponseEntity<Map<String, Object>> getMemberByNo(@PathVariable(value="memberNo", required=false) Optional<String> opt) {
     int memberNo = Integer.parseInt(opt.orElse("0"));
     return memberService.getMemberByNo(memberNo);
+  }
+  
+  @PutMapping(value="/members", produces="application/json")
+  public ResponseEntity<Map<String, Object>> modifyMember(@RequestBody Map<String, Object> map) {
+    return memberService.modifyMember(map);
+  }
+  
+  @DeleteMapping(value="/member/{memberNo}", produces="application/json")
+  public ResponseEntity<Map<String, Object>> removeMember(@PathVariable(value="memberNo", required=false) Optional<String> opt) {
+    int memberNo = Integer.parseInt(opt.orElse("0"));
+    return memberService.removeMember(memberNo);
+  }
+  
+  @DeleteMapping(value="/members/{memberNoList}", produces="application/json")
+  public ResponseEntity<Map<String, Object>> removeMembers(@PathVariable(value="memberNoList", required=false) Optional<String> opt) {
+    return memberService.removeMembers(opt.orElse("0"));
   }
   
 }

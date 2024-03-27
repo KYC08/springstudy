@@ -13,6 +13,7 @@
 
   <div>
     <h1>회원관리</h1>
+    <input type="hidden" id="member-no">
     <div>
       <label for="email">이메일</label>
       <input type="text" id="email">
@@ -22,17 +23,17 @@
       <input type="text" id="name">
     </div>
     <div>
-      <label for="none">선택안함</label>
       <input type="radio" name="gender" id="none" value="none" checked>
-      <label for="man">남자</label>
+      <label for="none">선택안함</label>
       <input type="radio" name="gender" id="man" value="man">
-      <label for="woman">여자</label>
+      <label for="man">남자</label>
       <input type="radio" name="gender" id="woman" value="woman">
+      <label for="woman">여자</label>
     </div>
     <div>
-      <input type="text" id="zonecode" placeholder="우편번호">
+      <input type="text" id="zonecode" onclick="execDaumPostcode()" placeholder="우편번호" readonly>
       <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-      <input type="text" id="address" placeholder="주소"><br>
+      <input type="text" id="address" placeholder="주소" readonly><br>
       <input type="text" id="detailAddress" placeholder="상세주소">
       <input type="text" id="extraAddress" placeholder="참고항목">
       <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -92,7 +93,14 @@
     
     <div>
       <div id="total"></div>
-      <div><select id="display"><option>20</option><option>50</option><option>100</option></select></div>
+      <div>
+        <button type="button" id="btn-select-remove">선택삭제</button>
+        <select id="display">
+        <option>20</option>
+        <option>50</option>
+        <option>100</option>
+        </select>
+      </div>
       <table border="1">
         <thead>
           <tr>
@@ -110,56 +118,78 @@
           </tr>
         </tfoot>
       </table>
-      <button type="button" id="btn-select-remove">선택삭제</button>
     </div>
     
   </div>
   
-  <script src="${contextPath}/resources/js/member.js"></script>
+  <script src="${contextPath}/resources/js/member.js?dt=<%=System.currentTimeMillis()%>"></script>
   <script>
   
 // jQuery 객체 선언
-var btnDetail = $('.btn-detail');
-  
+
+
 // 함수 표현식 (함수 만들기)
-const getMemberByNo = (evt)=>{
+const fnRemoveMember = ()=>{
+  if(!confirm('삭제할까요?')){
+    return;
+  }
   $.ajax({
-    type: 'GET',
-    url: getContextPath() + '/members/' + evt.target.dataset.memberNo,
+    type: 'DELETE',
+    url: fnGetContextPath() + '/member/' + jqMemberNo.val,
     dataType: 'json'
-  }).done(resData=>{  /* resData = {
-                           "addressList": [
-                             {
-                               "addressNo": 1,
-                               "zonecode": "12345",
-                               "address": "서울시 구로구 디지털로",
-                               "detailAddress": "카카오",
-                               "extraAddress": "(가산동)"
-                             },
-                             ...
-                           ],
-                           "member": {
-                             "memberNo": 1,
-                             "email": "email@email.com",
-                             "name": "gildong",
-                             "gender": "man"
-                           }
-                         }
-                      */
-    email.val(resData.member.email);
-    mName.val(resData.member.name);
-    $(':radio[value=' + resData.member.gender + ']').prop('checked', true);
-    zonecode.val(resData.addressList[0].zonecode);
-    address.val(resData.addressList[0].address);
-    detailAddress.val(resData.addressList[0].detailAddress);
-    extraAddress.val(resData.addressList[0].extraAddress);
+  }).done(resData=>{  // {"deleteCount": 1}
+    if(resData.deleteCount === 1){
+      alert('회원 정보가 삭제되었습니다.');
+      fnInit();
+      fnGetMemberList();
+    } else {
+      alert('회원 정보가 삭제되지 않았습니다.');
+    }
   }).fail(jqXHR=>{
-    alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+    alert(jqXHR.statusText + '(' + jqXHR + ')');
   })
 }
 
+const fnRemoveMembers = ()=>{
+	// 체크된 요소를 배열에 저장하기
+	let arr = [];
+	$.each($('.chk-member'), (i, chk)=>{
+		if($(chk).is(':checked')){
+			arr.push(chk.value);
+		}
+	})
+	// 체크된 요소가 없으면 함수 종료
+	if(arr.length === 0){
+		alert('선택된 회원 정보가 없습니다.');
+		return;
+	}
+	// 삭제 확인
+	if(!confirm('선택된 회원 정보를 모두 삭제할까요?')){
+		return;
+	}
+	// 삭제
+	$.ajax({
+		type: 'DELETE',
+		url: fnGetContextPath() + '/members/' + arr.join(','),
+		dataType: 'json',
+		success: (resData)=>{  // {"deleteCount": 3}
+	    if(resData.deleteCount === arr.length){
+	    	alert('선택된 회원 정보가 삭제되었습니다.');
+	    	vPage = 1;
+	    	fnGetMemberList();
+	    } else {
+	    	alert('선택된 회원 정보가 삭제되지 않았습니다.');
+	    }
+		},
+		error: (jqXHR)=>{
+			alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+		}
+	})
+}
+
 // 함수 호출 및 이벤트
-$(document).on('click', '.btn-detail', (evt)=>{ getMemberByNo(evt); })
+jqBtnRemove.on('click', fnRemoveMember);
+jqBtnSelectRemove.on('click', fnRemoveMembers);
 
   </script>
 
