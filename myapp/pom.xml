@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gdu</groupId>
-	<artifactId>prj10</artifactId>
-	<name>10_editor</name>
+	<artifactId>myapp</artifactId>
+	<name>myapp</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
   
@@ -13,6 +13,8 @@
     <org.springframework-version>5.3.19</org.springframework-version>
     <org.aspectj-version>1.9.19</org.aspectj-version>
     <org.slf4j-version>2.0.12</org.slf4j-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
   
   <dependencies>

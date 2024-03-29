@@ -20,42 +20,26 @@
 </head>
 <body>
 
-  <form method="POST"
-        action="${contextPath}/board/register.do">
-    <div>
-      <textarea id="contents" name="contents"></textarea>
-    </div>
-    <div>
-      <button type="submit">전송</button>
-    </div>
-  </form>
+  <h1>Sign In</h1>
   
-  <script>
-    $(document).ready(function(){
-    	$('#contents').summernote({
-        width: 1024,
-        height: 500,
-        lang: 'ko-KR',
-    	  callbacks: {
-    		  onImageUpload: (images)=>{
-    			  // 비동기 방식을 이용한 이미지 업로드
-    			  for(let i = 0; i < images.length; i++) {
-    				  let formData = new FormData();
-    				  formData.append('image', images[i]);
-    				  fetch('${contextPath}/summernote/imageUpload.do', {
-    					  method: 'POST',
-    				    body: formData
-    			    }).then(response=>response.json())
-    			      .then(resData=>{
-    			        $('#contents').summernote('insertImage', resData.src);
-    			      });
-    			   }          
-    		  } 
-    	  }
-      });
-    })
+  <div>
+    <form method="POST"
+          action="${contextPath}/user/signin.do">
+      <div>
+        <label for="email">아이디</label>
+        <input type="text" id="email" name="email" placeholder="example@naver.com">
+      </div>
+      <div>
+        <label for="pw">비밀번호</label>
+        <input type="password" id="pw" name="pw" placeholder="●●●●">
+      </div>
+      <div>
+        <input type="hidden" name="url" value="${url}">
+        <button type="submit">Sign In</button>
+      </div>
+    </form>
+  </div>
   
-  </script>
   
 </body>
 </html>
