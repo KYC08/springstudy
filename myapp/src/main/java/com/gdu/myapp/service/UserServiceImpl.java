@@ -29,13 +29,16 @@ public class UserServiceImpl implements UserService {
       
       String email = request.getParameter("email");
       String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
+      String ip = request.getRemoteAddr();
       
       Map<String, Object> params = Map.of("email", email
-          , "pw", pw);
+                                        , "pw", pw
+                                        , "ip", ip);
       
       UserDto user = userMapper.getUserByMap(params);
       
       if(user != null) {
+        userMapper.insertAccessHistory(params);
         request.getSession().setAttribute("user", user);
         response.sendRedirect(request.getParameter("url"));
       } else {
