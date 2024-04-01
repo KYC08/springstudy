@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
 <script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
 <script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
+
 </head>
 <body>
 
@@ -39,7 +40,6 @@
       </div>
     </form>
   </div>
-  
   
 </body>
 </html>
