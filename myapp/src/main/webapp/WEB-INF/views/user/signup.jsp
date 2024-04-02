@@ -101,7 +101,7 @@
     <hr class="my-3">
     
     <div class="form-check mb-3">
-      <input type="checkbox" name="service" class="form-check-input" id="chk-service">
+      <input type="checkbox" class="form-check-input" id="chk-service">
       <label class="form-check-label" for="chk-service">서비스 이용약관 동의(필수)</label>
     </div>
     <div>
@@ -135,6 +135,7 @@ var passwordCheck = false;
 var passwordConfirm = false;
 var nameCheck = false;
 var mobileCheck = false;
+var agreeCheck = false;
 
 const fnGetContextPath = ()=>{
   const host = location.host;  /* localhost:8080 */
@@ -306,9 +307,14 @@ const fnCheckMobile = () => {
 	}
 }
 
+const fnCheckAgree = () => {
+	  let chkService = document.getElementById('chk-service');
+	  agreeCheck = chkService.checked;
+	}
 
 const fnSignup = () => {
 	  document.getElementById('frm-signup').addEventListener('submit', (evt) => {
+		  fnCheckAgree();
 	    if(!emailCheck) {
 	      alert('이메일을 확인하세요.');
 	      evt.preventDefault();
@@ -325,6 +331,10 @@ const fnSignup = () => {
 	    	alert('휴대전화를 확인하세요.');
 	      evt.preventDefault();
 	      return;
+	    } else if(!agreeCheck) {
+	      alert('서비스 약관에 동의해야 서비스를 이용할 수 있습니다.');
+	      evt.preventDefault();
+	      return;
 	    }
 	  })
 	}
@@ -336,8 +346,6 @@ document.getElementById('inp-pw2').addEventListener('blur', fnConfirmPassword);
 document.getElementById('inp-name').addEventListener('blur',fnCheckName);
 document.getElementById('inp-mobile').addEventListener('blur',fnCheckMobile);
 fnSignup();
-
-
 
 
 </script>

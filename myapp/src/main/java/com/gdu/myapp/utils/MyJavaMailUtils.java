@@ -56,14 +56,7 @@ public class MyJavaMailUtils {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
     
   }
   
