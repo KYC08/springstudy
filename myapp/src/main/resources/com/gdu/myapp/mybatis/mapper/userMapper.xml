@@ -15,24 +15,7 @@
       <if test="pw!=null">AND PW = #{pw}</if>
     </where>
   </select>
-
-  <insert id="insertAccessHistory"
-          parameterType="Map">
-    INSERT INTO ACCESS_HISTORY_T (
-        ACCESS_HISTORY_NO
-      , EMAIL
-      , IP
-      , SIGNIN_DT
-      , SIGNOUT_DT
-    ) VALUES (
-        ACCESS_HISTORY_SEQ.NEXTVAL
-      , #{email}
-      , #{ip}
-      , CURRENT_DATE
-      , NULL
-    )
-  </insert>
-
+  
   <select id="getLeaveUserByMap"
           parameterType="Map"
           resultType="LeaveUserDto">
@@ -42,7 +25,7 @@
       <if test="email!=null">EMAIL = #{email}</if>
     </where>
   </select>
-
+  
   <insert id="insertUser"
           parameterType="UserDto">
     INSERT INTO USER_T (
@@ -69,11 +52,36 @@
       , CURRENT_DATE
     )
   </insert>
-
+  
   <delete id="deleteUser">
     DELETE
       FROM USER_T
      WHERE USER_NO = #{userNo}
   </delete>
+
+  <insert id="insertAccessHistory"
+          parameterType="Map">
+    INSERT INTO ACCESS_HISTORY_T (
+        ACCESS_HISTORY_NO
+      , EMAIL
+      , IP
+      , SIGNIN_DT
+      , SIGNOUT_DT
+    ) VALUES (
+        ACCESS_HISTORY_SEQ.NEXTVAL
+      , #{email}
+      , #{ip}
+      , CURRENT_DATE
+      , NULL
+    )
+  </insert>
+  
+  <update id="updateAccessHistory">
+    UPDATE ACCESS_HISTORY_T
+       SET SIGNOUT_DT = CURRENT_DATE
+     WHERE SIGNOUT_DT = NULL
+       AND SESSION_ID = #{sessionId}
+  </update>
+  
 
 </mapper>
