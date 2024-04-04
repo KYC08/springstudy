@@ -105,16 +105,12 @@ public class UserController {
       model.addAttribute("naverUser", naverUser);
       path = "user/naver_signup";
     }
-    
     return path;
-    
   }
-  
   
   @GetMapping("/signout.do")
   public void signout(HttpServletRequest request, HttpServletResponse response) {
     userService.signout(request, response);
   }
-
 
 }
