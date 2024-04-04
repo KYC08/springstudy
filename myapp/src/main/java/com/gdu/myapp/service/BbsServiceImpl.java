@@ -92,7 +92,7 @@ public class BbsServiceImpl implements BbsService {
     // 답글 정보 : userNo, contents
     // 원글 정보 : depth, groupNo, groupOrder
     int userNo = Integer.parseInt(request.getParameter("userNo"));
-    String contents = request.getParameter("contents");
+    String contents = MySecurityUtils.getPreventXss(request.getParameter("contents"));    
     int depth = Integer.parseInt(request.getParameter("depth"));
     int groupNo = Integer.parseInt(request.getParameter("groupNo"));
     int groupOrder = Integer.parseInt(request.getParameter("groupOrder"));
@@ -124,8 +124,7 @@ public class BbsServiceImpl implements BbsService {
 
   @Override
   public int removeBbs(int bbsNo) {
-    // TODO Auto-generated method stub
-    return 0;
+    return bbsMapper.removeBbs(bbsNo);
   }
 
   @Override

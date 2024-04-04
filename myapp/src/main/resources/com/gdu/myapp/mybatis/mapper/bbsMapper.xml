@@ -96,10 +96,12 @@
     )
   </insert>
   
-  
-  
-  
-  
+  <!-- BBS 게시글 삭제 (실제로는 state = 0 으로 업데이트 -->
+  <update id="removeBbs">
+    UPDATE BBS_T
+       SET STATE = 0
+     WHERE BBS_NO = #{bbsNo}
+  </update>
 
 
 </mapper>
