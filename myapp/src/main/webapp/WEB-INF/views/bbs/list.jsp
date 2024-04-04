@@ -1,16 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<c:set var="contextPath" value="<%=request.getContextPath()%>"/>
-<c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
+  pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<c:set var="contextPath" value="<%=request.getContextPath()%>" />
+<c:set var="dt" value="<%=System.currentTimeMillis()%>" />
 
-<jsp:include page="../layout/header.jsp"/>
+<jsp:include page="../layout/header.jsp" />
 
 <style>
-  .blind {
-    display: none;
-  }
+.blind {
+  display: none;
+}
 </style>
 
 <h1 class="title">BBS</h1>
@@ -32,21 +32,16 @@
         <td>${beginNo - vs.index}</td>
         <c:if test="${bbs.state == 1}">
           <td>${bbs.user.email}</td>
-          <td>
-            <c:forEach begin="1" end="${bbs.depth}" step="1">&nbsp;&nbsp;</c:forEach>
-            <c:if test="${bbs.depth != 0}">[Re]</c:if>
-            ${bbs.contents}
-            <c:if test="${bbs.user.userNo != sessionScope.user.userNo}">
+          <td><c:forEach begin="1" end="${bbs.depth}" step="1">&nbsp;&nbsp;</c:forEach>
+            <c:if test="${bbs.depth != 0}">[Re]</c:if> ${bbs.contents} <c:if
+              test="${bbs.user.userNo != sessionScope.user.userNo}">
               <button type="button" class="btn-reply">답글</button>
-            </c:if>
-            <c:if test="${bbs.user.userNo == sessionScope.user.userNo}">
+            </c:if> <c:if test="${bbs.user.userNo == sessionScope.user.userNo}">
               <button type="button" class="btn-remove">삭제</button>
               <input type="hidden" value="${bbs.bbsNo}">
-            </c:if>
-          </td>
-          <td>
-            <fmt:formatDate value="${bbs.createDt}" pattern="yyyy.MM.dd. HH:mm:ss" />
-          </td>
+            </c:if></td>
+          <td><fmt:formatDate value="${bbs.createDt}"
+              pattern="yyyy.MM.dd. HH:mm:ss" /></td>
         </c:if>
         <c:if test="${bbs.state == 0}">
           <td colspan="3">삭제된 게시글입니다.</td>
@@ -55,22 +50,24 @@
       <tr class="write blind">
         <td colspan="4">
           <form method="POST"
-                action="${contextPath}/bbs/registerReply.do">
+            action="${contextPath}/bbs/registerReply.do">
             <div>
-                <span>답글작성자</span>
-                <span>${sessionScope.user.email}</span>
-              </div>
-              <div>
-                <textarea class="contents" name="contents" placeholder="답글을 입력하세요"></textarea>
-              </div>
-              <div>
-                <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
-                <!-- 원글의 depth / groupNo / groupOrder -->
-                <input type="hidden" name="depth" value="${bbs.depth}">
-                <input type="hidden" name="groupNo" value="${bbs.groupNo}">
-                <input type="hidden" name="groupOrder" value="${bbs.groupOrder}">
-                <button type="submit">작성완료</button>
-              </div> 
+              <span>답글작성자</span> <span>${sessionScope.user.email}</span>
+            </div>
+            <div>
+              <textarea class="contents" name="contents"
+                placeholder="답글을 입력하세요"></textarea>
+            </div>
+            <div>
+              <input type="hidden" name="userNo"
+                value="${sessionScope.user.userNo}">
+              <!-- 원글의 depth / groupNo / groupOrder -->
+              <input type="hidden" name="depth" value="${bbs.depth}">
+              <input type="hidden" name="groupNo" value="${bbs.groupNo}">
+              <input type="hidden" name="groupOrder"
+                value="${bbs.groupOrder}">
+              <button type="submit">작성완료</button>
+            </div>
           </form>
         </td>
       </tr>
@@ -94,7 +91,7 @@
 	  if('${sessionScope.user}' === '') {
 		  if(confirm('Sign In 이 필요한 기능입니다. Sign In 할까요?')){
 			  location.href = '${contextPath}/user/signin.page';
-		  }
+		  }lo
 	  }
   }
 
@@ -142,5 +139,5 @@
   fnInsertReplyCount();
 
 </script>
-  
-<%@ include file="../layout/footer.jsp" %>
+
+<%@ include file="../layout/footer.jsp"%>
