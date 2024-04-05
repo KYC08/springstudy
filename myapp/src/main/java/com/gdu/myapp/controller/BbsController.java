@@ -50,5 +50,20 @@ public class BbsController {
     return "redirect:/bbs/list.do";
   }
   
+  @GetMapping("/search.do")
+  public String search(HttpServletRequest request, Model model) {
+    bbsService.loadBbsList(request, model);
+    return "bbs/list";
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 }

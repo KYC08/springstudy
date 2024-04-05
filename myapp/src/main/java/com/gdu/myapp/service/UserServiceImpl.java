@@ -106,15 +106,17 @@ public class UserServiceImpl implements UserService {
       if(insertCount == 1) {
         
         // Sign In 및 접속 기록을 위한 Map
-        Map<String, Object> map = Map.of("email", email
-                                        , "pw", pw
-                                        , "ip", request.getRemoteAddr());
+        Map<String, Object> params = Map.of("email", email
+                                          , "pw", pw
+                                          , "ip", request.getRemoteAddr()
+                                          , "userAgent", request.getHeader("User-Agent")
+                                          , "sessionId", request.getSession().getId());
         
         // Sign In (세션에 user 저장하기)
-        request.getSession().setAttribute("user", userMapper.getUserByMap(map));
+        request.getSession().setAttribute("user", userMapper.getUserByMap(params));
         
         // 접속 기록 남기기
-        userMapper.insertAccessHistory(map);
+        userMapper.insertAccessHistory(params);
         
         out.println("alert('회원 가입되었습니다.');");
         out.println("location.href='" + request.getContextPath() + "/main.page';");
@@ -197,6 +199,85 @@ public class UserServiceImpl implements UserService {
       url = request.getContextPath() + "/main.page";
     }
     return url;
+  }
+  
+  @Override
+  public void signin(HttpServletRequest request, HttpServletResponse response) {
+    
+    try {
+      
+      // 입력한 아이디
+      String email = request.getParameter("email");
+      
+      // 입력한 비밀번호 + SHA-256 방식의 암호화
+      String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
+      
+      // 접속 IP (접속 기록을 남길 때 필요한 정보)
+      String ip = request.getRemoteAddr();
+      
+      // 접속 수단 (요청 헤더의 User-Agent 값)
+      String userAgent = request.getHeader("User-Agent");
+      
+      // DB로 보낼 정보 (email/pw : USER_T, email/ip: ACCESS_HISTORY_T)
+      Map<String, Object> params = Map.of("email", email
+                                        , "pw", pw
+                                        , "ip", ip
+                                        , "userAgent", userAgent
+                                        , "sessionId", request.getSession().getId());
+      
+      // email/pw 가 일치하는 회원 정보 가져오기
+      UserDto user = userMapper.getUserByMap(params);
+      
+      // 일치하는 회원 있음 (Sign In 성공)
+      if(user != null) {
+        
+        // 접속 기록 ACCESS_HISTORY_T 에 남기기
+        userMapper.insertAccessHistory(params);
+        
+        // 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+        session.setMaxInactiveInterval(10);  // 세션 유지 시간 10초 설정
+        
+        // Sign In 후 페이지 이동
+        response.sendRedirect(request.getParameter("url"));
+        
+      // 일치하는 회원 없음 (Sign In 실패)
+      } else {
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<script>");
+        out.println("<alert('일치하는 회원 정보가 없습니다.')>");
+        out.println("location.href='" + request.getContextPath() + "/main.page'");
+        out.println("</script>");
+        out.flush();
+        out.close();
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  @Override
+  public void signout(HttpServletRequest request, HttpServletResponse response) {
+    
+    try {
+      
+      // Sign Out 기록 남기기
+      HttpSession session = request.getSession();
+      String sessionId = session.getId();
+      userMapper.updateAccessHistory(sessionId);
+      
+      // 세션에 저장된 모든 정보 초기화
+      session.invalidate();
+      
+      // 메인 페이지로 이동
+      response.sendRedirect(request.getContextPath() + "/main.page");
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
   
   @Override
@@ -342,78 +423,6 @@ public class UserServiceImpl implements UserService {
     
     return user;
   }
-
-  @Override
-  public void signin(HttpServletRequest request, HttpServletResponse response) {
-    
-    try {
-      
-      // 입력한 아이디
-      String email = request.getParameter("email");
-      
-      // 입력한 비밀번호 + SHA-256 방식의 암호화
-      String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
-      
-      // 접속 IP (접속 기록을 남길 때 필요한 정보)
-      String ip = request.getRemoteAddr();
-      
-      // DB로 보낼 정보 (email/pw : USER_T, email/ip: ACCESS_HISTORY_T)
-      Map<String, Object> params = Map.of("email", email
-                                        , "pw", pw
-                                        , "ip", ip);
-      
-      // email/pw 가 일치하는 회원 정보 가져오기
-      UserDto user = userMapper.getUserByMap(params);
-      
-      // 일치하는 회원 있음 (Sign In 성공)
-      if(user != null) {
-        
-        // 접속 기록 ACCESS_HISTORY_T 에 남기기
-        userMapper.insertAccessHistory(params);
-        
-        // 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
-        request.getSession().setAttribute("user", user);
-        
-        // Sign In 후 페이지 이동
-        response.sendRedirect(request.getParameter("url"));
-        
-      // 일치하는 회원 없음 (Sign In 실패)
-      } else {
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println("<script>");
-        out.println("<alert('일치하는 회원 정보가 없습니다.')>");
-        out.println("location.href='" + request.getContextPath() + "/main.page'");
-        out.println("</script>");
-        out.flush();
-        out.close();
-      }
-      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  
-  @Override
-  public void signout(HttpServletRequest request, HttpServletResponse response) {
-    
-    try {
-      
-      // Sign Out 기록 남기기
-      HttpSession session = request.getSession();
-      String sessionId = session.getId();
-      userMapper.updateAccessHistory(sessionId);
-      
-      // 세션에 저장된 모든 정보 초기화
-      session.invalidate();
-      
-      // 메인 페이지로 이동
-      response.sendRedirect(request.getContextPath() + "/main.page");
-      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
   
   @Override
   public boolean hasUser(UserDto user) {
@@ -431,12 +440,5 @@ public class UserServiceImpl implements UserService {
     userMapper.insertAccessHistory(map);
     
   }
-  
-  
-  
-  
-  
-  
-  
   
 }
