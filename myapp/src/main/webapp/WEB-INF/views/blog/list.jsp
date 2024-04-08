@@ -98,21 +98,34 @@ const fnScrollHandler = () => {
 	})
 }
 
+const fnBlogDetail = () => {
+	
+	$(document).on('click', '.blog', (evt) => {
+		
+		// <div class="blog"> 중 클릭 이벤트가 발생한 <div> : 이벤트 대상
+		// evt.target.dataset.blogNo === $(evt.target).data('blogNo')
+		
+		location.href = '${contextPath}/blog/detail.do?blogNo=' + evt.target.dataset.blogNo;
+		
+	})
+	
+}
 
-  const fnInsertCount = () => {
-	  let insertCount = '${insertCount}';
-	  if(insertCount !== '') {
-		  if(insertCount === '1') {
-			  alert('블로그가 등록되었습니다.');
-		  } else {
-			  alert('블로그 등록이 실패했습니다.');
-		  }
-	  } 
-  }
+const fnInsertCount = () => {
+	let insertCount = '${insertCount}';
+	if(insertCount !== '') {
+		if(insertCount === '1') {
+			alert('블로그가 등록되었습니다.');
+			} else {
+				alert('블로그 등록이 실패했습니다.');
+				}
+		} 
+	}
   
   fnGetBlogList();
   fnScrollHandler();
   fnInsertCount();
+  fnBlogDetail();
 
 </script>
 

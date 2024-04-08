@@ -35,7 +35,7 @@ public class MySecurityUtils {
    *    "<" 기호와 ">" 기호를 엔티티 코드로 변환한다.
    */
   public static String getPreventXss(String original) {
-    return original.replace("<", "&lt;").replace(">", "&gt;");
+    return original.replace("<script>", "&lt;script&gt;").replace("</script>", "&lt;script&gt;");
   }
   
   /*
@@ -43,6 +43,7 @@ public class MySecurityUtils {
    * 1. 랜덤으로 생성해야 한다.
    * 2. 보안을 위해 SecureRandom 클래스를 활용한다.
    */
+  
   public static String getRandomString(int count, boolean letter, boolean number) {
     StringBuilder builder = new StringBuilder();
     List<String> list = new ArrayList<String>();

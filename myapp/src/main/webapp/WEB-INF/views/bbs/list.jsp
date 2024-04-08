@@ -105,7 +105,7 @@
 	  if('${sessionScope.user}' === '') {
 		  if(confirm('Sign In 이 필요한 기능입니다. Sign In 할까요?')){
 			  location.href = '${contextPath}/user/signin.page';
-		  }lo
+		  }
 	  }
   }
 

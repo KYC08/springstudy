@@ -57,4 +57,13 @@
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
   
+  <select id="getBlogByNo"
+          resultMap="BlogMap">
+    SELECT  B.BLOG_NO, B.TITLE, B.CONTENTS, B.HIT, B.CREATE_DT, B.MODIFY_DT
+          , U.USER_NO, U.EMAIL
+      FROM USER_T U INNER JOIN BLOG_T B
+        ON U.USER_NO = B.USER_NO
+     WHERE B.BLOG_NO = #{blogNo}
+  </select>
+  
 </mapper>

@@ -114,5 +114,10 @@ public class BlogServiceImpl implements BlogService {
                                      , "totalPage", myPageUtils.getTotalPage())
                                 , HttpStatus.OK);
   }
+  
+  @Override
+  public BlogDto getBlogByNo(int blogNo) {
+    return blogMapper.getBlogByNo(blogNo);
+  }
 
 }
