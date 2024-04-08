@@ -10,4 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface BlogService {
   ResponseEntity<Map<String, Object>> summernoteImageUpload(MultipartFile multipartFile);
   int registerBlog(HttpServletRequest request);
+  ResponseEntity<Map<String, Object>> getBlogList(HttpServletRequest request);
 }
