@@ -16,5 +16,4 @@ public class CommentDto {
   private String contents;
   private Timestamp createDt;
   private UserDto user;
-  
 }
