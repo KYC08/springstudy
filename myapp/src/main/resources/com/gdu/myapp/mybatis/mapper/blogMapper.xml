@@ -14,7 +14,7 @@
     <result property="modifyDt" column="MODIFY_DT" />
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO" />
-      <result property="email"  column="EMAIL" />  
+      <result property="email"  column="EMAIL" />
     </association>
   </resultMap>
   

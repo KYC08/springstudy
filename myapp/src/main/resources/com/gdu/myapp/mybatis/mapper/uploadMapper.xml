@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.myapp.mapper.UploadMapper">
+
+  <!-- INSERT 수행 이전에 파라미터 UploadDto의 uploadNo 속성(필드)에 UPLOAD_SEQ.NEXTVAL 값을 저장한다. -->
+  <insert id="insertUpload"
+          parameterType="UploadDto">
+    <selectKey order="BEFORE" keyProperty="uploadNo" resultType="int">
+      SELECT UPLOAD_SEQ.NEXTVAL
+        FROM DUAL
+    </selectKey>
+    INSERT INTO UPLOAD_T (
+        UPLOAD_NO
+      , TITLE
+      , CONTENTS
+      , CREATE_DT
+      , MODIFY_DT
+      , USER_NO
+    ) VALUES (
+        #{uploadNo}
+      , #{title}
+      , #{contents}
+      , TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD HH24:MI:SS')
+      , TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD HH24:MI:SS')
+      , #{user.userNo}
+    )
+    
+  </insert>
+  
+  <insert id="insertAttach"
+          parameterType="AttachDto">
+    INSERT INTO ATTACH_T (
+        ATTACH_NO
+      , UPLOAD_PATH
+      , FILESYSTEM_NAME
+      , ORIGINAL_FILENAME
+      , DOWNLOAD_COUNT
+      , HAS_THUMBNAIL
+      , UPLOAD_NO
+    ) VALUES (
+        ATTACH_SEQ.NEXTVAL
+      , #{uploadPath}
+      , #{filesystemName}
+      , #{originalFilename}
+      , 0
+      , #{hasThumbnail}
+      , #{uploadNo}
+    )
+          
+          
+          
+  </insert>
+
+  <!-- UPLOAD_T 목록 -->
+  <!-- UPLOAD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT -->
+  <!-- USER_NO, EMAIL -->
+  <!-- ATTACH_COUNT -->
+
+
+</mapper>
