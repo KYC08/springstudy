@@ -89,9 +89,15 @@
                 ON USR.USER_NO = UP.USER_NO)
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
-  <!-- UPLOAD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT -->
-  <!-- USER_NO, EMAIL -->
-  <!-- ATTACH_COUNT -->
-
+  
+  <select id="getUploadByNo"
+          resultMap="UploadMap">
+    SELECT UP.UPLOAD_NO, UP.TITLE, UP.CONTENTS, UP.CREATE_DT, UP.MODIFY_DT
+         , USR.USER_NO, USR.EMAIL
+      FROM USER_T USR INNER JOIN UPLOAD_T UP
+        ON USR.USER_NO = UP.USER_NO
+     WHERE UP.UPLOAD_NO = #{uploadNo}
+  </select>
+  
 
 </mapper>

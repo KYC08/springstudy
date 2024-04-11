@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -39,5 +40,11 @@ public class UploadController {
     redirectAttributes.addFlashAttribute("inserted", uploadService.registerUpload(multipartRequest));
     return "redirect:/upload/list.do";
   }
-
+  
+  @GetMapping("/detail.do")
+  public String detail(@RequestParam(value="uploadNo", required=false, defaultValue="0") int uploadNo
+                     , Model model) {
+    uploadService.loadUploadByNo(uploadNo, model);
+    return "upload/detail";
+  }
 }

@@ -180,5 +180,9 @@ public class UploadServiceImpl implements UploadService {
     model.addAttribute("sort", sort);
     model.addAttribute("page", page);
   }
-
+  
+  @Override
+  public void loadUploadByNo(int uploadNo, Model model) {
+    model.addAttribute("upload", uploadMapper.getUploadByNo(uploadNo));
+  }
 }
