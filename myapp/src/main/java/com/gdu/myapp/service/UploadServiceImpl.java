@@ -3,6 +3,10 @@ package com.gdu.myapp.service;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -77,6 +81,7 @@ public class UploadServiceImpl implements UploadService {
         File file = new File(dir, filesystemName);
         
         try {
+          
           multipartFile.transferTo(file);
           
           // 썸네일 작성
@@ -116,8 +121,64 @@ public class UploadServiceImpl implements UploadService {
 
   @Override
   public void loadUploadList(Model model) {
-    // TODO Auto-generated method stub
-
+    
+    /*
+     * interface UploadService {
+     *   UploadService.java;
+     * }
+     * 
+     * class UploadRegisterService implements UploadService {
+     *   @Override
+     *   void execute(Model model) {
+     *   
+     *   }  
+     * }
+     * 
+     * class UploadListService implements UploadService {
+     *   @Override
+     *   void execute(Model model) {
+     *   
+     *   }
+     * }
+     */
+    
+    Map<String, Object> modelMap = model.asMap();
+    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+    
+    int total = uploadMapper.getUploadCount();
+    
+    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+    int display = Integer.parseInt(optDisplay.orElse("20"));
+    
+    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(optPage.orElse("1"));
+    
+    myPageUtils.setPaging(total, display, page);
+    
+    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+    String sort = optSort.orElse("DESC");
+    
+    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+                                   , "end", myPageUtils.getEnd()
+                                   , "sort", sort);
+    
+    /*
+     * total = 100, display = 20
+     * 
+     * page  beginNo
+     * 1     100
+     * 2     80
+     * 3     60
+     * 4     40
+     * 5     20
+     */
+    
+    model.addAttribute("beginNo", total - (page - 1) * display);
+    model.addAttribute("uploadList", uploadMapper.getUploadList(map));
+    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/upload/list.do", sort, display));
+    model.addAttribute("display", display);
+    model.addAttribute("sort", sort);
+    model.addAttribute("page", page);
   }
 
 }

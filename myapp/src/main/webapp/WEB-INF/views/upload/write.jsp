@@ -45,7 +45,47 @@
 
 <script>
 
+  // 제목 필수 입력 스크립트
+  const fnRegisterUpload = () => {
+	  document.getElementById('frm-upload-reigster').addEventListener('submit', (evt) => {
+		  if(document.getElementById('title').value === '') {
+			  alert('제목은 필수입니다.');
+			  evt.preventDefault();
+			  return;
+		  }
+	  })
+  }
 
+  // 크기 제한 스크립트 + 첨부 목록 출력 스크립트
+  const fnAttachCheck = () => {
+      document.getElementById('files').addEventListener('change', (evt) => {
+        const limitPerSize = 1024 * 1024 * 10;
+        const limitTotalSize = 1024 * 1024 * 100;
+        let totalSize = 0;
+        const files = evt.target.files;
+        const attachList = document.getElementById('attach-list');
+        attachList.innerHTML = '';
+        for(let i = 0; i < files.length; i++){
+          if(files[i].size > limitPerSize){
+            alert('각 첨부 파일의 최대 크기는 10MB입니다.');
+            evt.target.value = '';
+            attachList.innerHTML = '';
+            return;
+          }
+          totalSize += files[i].size;
+          if(totalSize > limitTotalSize){
+            alert('전체 첨부 파일의 최대 크기는 100MB입니다.');
+            evt.target.value = '';
+            attachList.innerHTML = '';
+            return;
+          }
+          attachList.innerHTML += '<div>' + files[i].name + '</div>';
+        }
+      })
+    }
+  
+  fnRegisterUpload();
+  fnAttachCheck();
 
 
 </script>

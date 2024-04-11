@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class UploadDto {
   private int uploadNo;
   private String title, contents, createDt, modifyDt;
+  private int attachCount;
   private UserDto user;
 }
