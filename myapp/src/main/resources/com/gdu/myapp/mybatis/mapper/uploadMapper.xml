@@ -63,8 +63,6 @@
       , #{uploadNo}
     )
           
-          
-          
   </insert>
 
   <select id="getUploadCount">
@@ -98,6 +96,27 @@
         ON USR.USER_NO = UP.USER_NO
      WHERE UP.UPLOAD_NO = #{uploadNo}
   </select>
+  
+  <select id="getAttachList"
+          resultType="AttachDto">
+    SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+      FROM ATTACH_T
+     WHERE UPLOAD_NO = #{uploadNo}
+  </select>
+  
+  <select id="getAttachByNo"
+          resultType="AttachDto">
+    SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+      FROM ATTACH_T
+     WHERE ATTACH_NO = #{attachNo}
+  </select>
+  
+  <update id="updateDownloadCount">
+    UPDATE ATTACH_T
+       SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+     WHERE ATTACH_NO = #{attachNo}
+  </update>
+  
   
 
 </mapper>

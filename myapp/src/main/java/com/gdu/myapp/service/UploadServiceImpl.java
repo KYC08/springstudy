@@ -1,6 +1,7 @@
 package com.gdu.myapp.service;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,11 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -184,5 +190,64 @@ public class UploadServiceImpl implements UploadService {
   @Override
   public void loadUploadByNo(int uploadNo, Model model) {
     model.addAttribute("upload", uploadMapper.getUploadByNo(uploadNo));
+    model.addAttribute("attachList", uploadMapper.getAttachList(uploadNo));
   }
+  
+  @Override
+  public ResponseEntity<Resource> download(HttpServletRequest request) {
+    
+    // 첨부 파일 정보를 DB 에서 가져오기
+    int attachNo = Integer.parseInt(request.getParameter("attachNo"));
+    AttachDto attach = uploadMapper.getAttachByNo(attachNo);
+    
+    // 첨부 파일 정보를 File 객체로 만든 뒤 Resource 객체로 변환
+    File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+    Resource resource = new FileSystemResource(file);
+    
+    // 첨부 파일이 없으면 다운로드 취소
+    if(!resource.exists()) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    // DOWNLOAD_COUNT 증가
+    uploadMapper.updateDownloadCount(attachNo);
+    
+    // 사용자가 다운로드 받을 파일명 결정 (originalFilename 을 브라우저에 따라 다르게 인코딩 처리)
+    String originalFilename = attach.getOriginalFilename();
+    String userAgent = request.getHeader("User-Agent");
+    try {
+      // IE
+      if(userAgent.contains("Trident")) {
+        originalFilename = URLEncoder.encode(originalFilename, "UTF-8").replace("+", " ");
+      }
+      // Edge
+      else if(userAgent.contains("Edg")) {
+        originalFilename = URLEncoder.encode(originalFilename, "UTF-8");
+      }
+      // Other
+      else {
+        originalFilename = new String(originalFilename.getBytes("UTF-8"), "ISO-8859-1");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // 다운로드용 응답 헤더 설정 (HTTP 참조)
+    HttpHeaders responseHeader = new HttpHeaders();
+    responseHeader.add("Content-Type", "application/octet-stream");
+    responseHeader.add("Content-Disposition", "attachment; filename=" + originalFilename);
+    responseHeader.add("Content-Length", file.length() + "");
+   
+    // 다운로드 진행
+    return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+    
+  }
+  
+  @Override
+  public ResponseEntity<Resource> downloadAll(HttpServletRequest request) {
+    
+    return null;
+    
+  }
+  
 }
